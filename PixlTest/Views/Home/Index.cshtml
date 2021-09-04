@@ -1,0 +1,23 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+@model IEnumerable<Order>
+<h4>Список пользователей</h4>
+<table class="table table-bordered" style="margin-top:15px">
+    <tr>
+        <td>Номер заказа</td>
+        <td>Полная стоимость</td>
+        <td>Адрес доставки</td>
+        <td>Стоимость доставки</td>
+    </tr>
+    @foreach (var order in Model)
+    {
+        <tr>
+            <td>@order.Id</td>
+            <td>@order.TotalPrice</td>
+            <td>@order.DeliveryAddress.AddressLine1</td>
+            <td>@order.DeliveryPrice</td>
+        </tr>
+    }
+</table>

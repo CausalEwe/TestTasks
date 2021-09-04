@@ -56,7 +56,7 @@ namespace AdminPanelGTA.Controllers
 			}
 			catch
 			{
-				return new JsonResult("Ошибка 404");
+				return new JsonResult(_playerError);
 			}
 
 			return new JsonResult(player);

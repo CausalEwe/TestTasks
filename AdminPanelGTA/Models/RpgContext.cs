@@ -2,13 +2,13 @@
 
 namespace AdminPanelGTA.Models
 {
-	public class RpgContext : DbContext
-	{
-		public DbSet<Player> Players { get; set; }
+  public class RpgContext : DbContext
+  {
+    public DbSet<Player> Players { get; set; }
 
-		public RpgContext(DbContextOptions<RpgContext> options)
-			: base(options)
-			{
-			}
-	}
+    public RpgContext(DbContextOptions<RpgContext> options)
+      : base(options)
+    {
+    }
+  }
 }

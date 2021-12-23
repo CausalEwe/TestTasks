@@ -1,32 +1,64 @@
-﻿namespace Loymax.Repositories
+﻿using System;
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
+
+namespace Loymax.Repositories
 {
-    internal class UserRepository : IUserRepository
+    public class UserRepository : IUserRepository
     {
         public User Create(User user)
         {
-            var query = "insert into Users(Name, LastName, MiddleName, BirthDay) values(user.Name, user.LastName, user.MiddleName, user.BirthDay)";
-            return user;
+            using (var db = new LoymaxContext())
+            {
+                db.Users.Add(user);
+                db.SaveChanges();
+                return user;
+            }
         }
-        public decimal GetBalance(User user)
+
+        public User GetUser(int id)
         {
-            decimal balance = 0;
-            var query = "select Amount from Users where Name = User.Name and LastName = user.LastName";
-            return balance;
+            using (var db = new LoymaxContext())
+            {
+                var user = db.Users.Single(x => x.Id == id);
+                return user;
+            }
         }
+
         public decimal AddMoney(User user, decimal count)
         {
-            decimal amount = 0;
+            using (var db = new LoymaxContext())
+            {
+                user = db.Users.Single(x => x.Id == user.Id);
+                user.Balance = +count;
+                try
+                {
+                    db.SaveChanges();
+                }
+                catch(DbUpdateConcurrencyException exception)
+                {
+                    throw new Exception("");
+                }
 
-            var query = "update Amount from Users Set Amount + count where Name = User.Name and LastName = user.LastName";
-            return amount;
+                return user.Balance;
+            }
         }
-        public decimal DeleteMoney(User user, decimal count)
+
+        public decimal? DeleteMoney(User user, decimal count)
         {
-            decimal amount = 0;
-            var balance = GetBalance(user);
-            var query = "query";
-            if (balance > count) query = "update Amount from Users Set Amount - count where Name = User.Name and LastName = user.LastName";
-            return amount;
+            decimal? newBalance = null;
+            using (var db = new LoymaxContext())
+            {
+                user = db.Users.Single(x => x.Id == user.Id);
+                if (user.Balance > count)
+                {
+                    user.Balance = -count;
+                    db.SaveChanges();
+                    newBalance = user.Balance;
+                }
+
+                return newBalance;
+            }
         }
     }
 }

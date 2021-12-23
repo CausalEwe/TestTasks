@@ -5,16 +5,18 @@ namespace Loymax
 {
     public class User
     {
-        [Required][RegularExpression(@"[a-zA-ZА-яА-Я]",
-         ErrorMessage = "Characters are not allowed.")]
+        public int Id { get; set; }
+        [Required(ErrorMessage ="Укажите имя")]
+        [RegularExpression(@"^[a-zA-Zа-яА-Я''-'\s]{1,40}$", ErrorMessage = "Имя должно содержать только буквы")]
         public string Name { get; set; }
-        [Required]
+        //[Required]
         public DateTime BirthDay { get; set; }
         public string MiddleName { get; set; }
-        [Required]
-        [RegularExpression(@"[a-zA-ZА-яА-Я]",
-         ErrorMessage = "Characters are not allowed.")]
+        [Required(ErrorMessage = "Укажите фамилию")]
+        [RegularExpression(@"^[a-zA-Zа-яА-Я''-'\s]{1,40}$", ErrorMessage = "Фамилия должна содержать только буквы")]
         public string LastName { get; set; }
+        [ConcurrencyCheck]
+        public decimal Balance { get; set; }
     }
 }
  

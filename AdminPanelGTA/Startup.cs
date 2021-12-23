@@ -21,7 +21,7 @@ namespace AdminPanelGTA
 		// This method gets called by the runtime. Use this method to add services to the container.
 		public void ConfigureServices(IServiceCollection services)
 		{
-			string connection = Configuration.GetConnectionString("DefaultConnection");
+			var connection = Configuration.GetConnectionString("DefaultConnection");
 			services.AddDbContext<RpgContext>(options =>
 				options.UseMySql(connection, new MySqlServerVersion(new Version(5, 7))));
 			services.AddControllers();

@@ -4,7 +4,7 @@
     {
         User Create(User user);
         User GetUser(int id);
-        decimal AddMoney(User user, decimal count);
-        decimal? DeleteMoney(User user, decimal count);
+        BalanceStatus AddMoney(User user, decimal count);
+        BalanceStatus DeleteMoney(User user, decimal count);
     }
 }

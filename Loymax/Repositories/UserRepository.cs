@@ -4,6 +4,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Loymax.Repositories
 {
+    public enum BalanceStatus
+    {
+        Ok = 0,
+        Busy = 1,
+        NotEnought = 2,
+    }
     public class UserRepository : IUserRepository
     {
         public User Create(User user)
@@ -25,7 +31,7 @@ namespace Loymax.Repositories
             }
         }
 
-        public decimal AddMoney(User user, decimal count)
+        public BalanceStatus AddMoney(User user, decimal count)
         {
             using (var db = new LoymaxContext())
             {
@@ -35,29 +41,34 @@ namespace Loymax.Repositories
                 {
                     db.SaveChanges();
                 }
-                catch(DbUpdateConcurrencyException exception)
+                catch(DbUpdateConcurrencyException ex)
                 {
-                    throw new Exception("");
+                    return BalanceStatus.Busy;
                 }
-
-                return user.Balance;
+                return BalanceStatus.Ok;
             }
         }
 
-        public decimal? DeleteMoney(User user, decimal count)
+        public BalanceStatus DeleteMoney(User user, decimal count)
         {
-            decimal? newBalance = null;
             using (var db = new LoymaxContext())
             {
                 user = db.Users.Single(x => x.Id == user.Id);
                 if (user.Balance > count)
                 {
-                    user.Balance = -count;
-                    db.SaveChanges();
-                    newBalance = user.Balance;
+                    try
+                    {
+                        user.Balance = -count;
+                        if (user.Balance < 0) return BalanceStatus.NotEnought;
+                        db.SaveChanges();
+                        return BalanceStatus.Ok;
+                    }
+                    catch (DbUpdateConcurrencyException ex)
+                    {
+                        return BalanceStatus.Busy;
+                    }
                 }
-
-                return newBalance;
+                return BalanceStatus.NotEnought;
             }
         }
     }

@@ -42,17 +42,20 @@ namespace UnitTests
             using (var db = new LoymaxContext())
             {
                 balanceAfter = db.Users.Select(x => x.Balance).ToList();
-                Assert.NotNull(balanceAfter);
+                foreach (var balance in balanceAfter)
+                {
+                    Assert.True(balance > 0);
+                }
             }
         }
 
         private static void ChangeBalanceAmount(UserController controller)
         {
             var rnd = new Random();
-            var id = 1;
+            var id = rnd.Next(1, 50);//Тут можно написать один id для точной проверки многопоточного зачисления/списания
             var value = rnd.Next(1, 1000);
             controller.AddMoney(id, value);
-            //controller.DeleteMoney(id, value);
+            controller.DeleteMoney(id, value);
         }
     }
 }

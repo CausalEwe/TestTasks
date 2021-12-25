@@ -1,7 +1,5 @@
 ﻿using Loymax.Repositories;
-using Microsoft.EntityFrameworkCore;
 using System;
-using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Loymax.Controllers
@@ -32,22 +30,35 @@ namespace Loymax.Controllers
         }
         [HttpPut]
         [Route("addMoney/{id}")]
-        public decimal AddMoney(int id, decimal count)
+        public string AddMoney(int id, decimal count)
         {
             var user = _userRepository.GetUser(id);
             if (user == null) throw new Exception("user not found");
-            var newBalance = _userRepository.AddMoney(user, count);
-            return newBalance;
+            var status = _userRepository.AddMoney(user, count);
+            if (status == BalanceStatus.Busy)
+            {
+                return "В данный момент пополнение невозможно, счет находится в обработке";
+            }
+            var balance = GetBalance(id);
+            return $"Вы пополнили баланс. Сейчас на счету {balance} рублей";
         }
         [HttpPut]
         [Route("deleteMoney")]
-        public decimal? DeleteMoney(int id, decimal count)
+        public string DeleteMoney(int id, decimal count)
         {
             var user = _userRepository.GetUser(id);
             if (user == null) throw new Exception("user not found");
-            var newBalance = _userRepository.DeleteMoney(user, count);
-            if (newBalance == null) throw new Exception("На вашем счету недостаточно средств");
-            return newBalance;
+            var status = _userRepository.DeleteMoney(user, count);
+            if (status == BalanceStatus.Busy)
+            {
+                return "В данный момент невозможно списать средства, счет находится в обработке";
+            }
+            var balance = GetBalance(id);
+            if (status == BalanceStatus.NotEnought)
+            {
+                return $"На вашем счету не хватает средств. Ваш баланс {balance}";
+            }
+            return $"Списание средств прошло успешно. Сейчас на счету {balance} рублей";
         }
     }
 }

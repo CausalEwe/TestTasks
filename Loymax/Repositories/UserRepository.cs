@@ -45,6 +45,10 @@ namespace Loymax.Repositories
                 {
                     return BalanceStatus.Busy;
                 }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
                 return BalanceStatus.Ok;
             }
         }
@@ -66,6 +70,10 @@ namespace Loymax.Repositories
                     catch (DbUpdateConcurrencyException ex)
                     {
                         return BalanceStatus.Busy;
+                    }
+                    catch (Exception ex)
+                    {
+                        throw ex;
                     }
                 }
                 return BalanceStatus.NotEnought;

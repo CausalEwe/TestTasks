@@ -14,6 +14,7 @@ namespace UnitTests
 {
     public class UserControllerTests
     {
+        private static Random rnd = new Random();
         private const string Conn = "server=localhost;database=users;user=root;password=root;";
 
         [Fact]
@@ -37,7 +38,10 @@ namespace UnitTests
                 balanceBefore = db.Users.Select(x => x.Balance).ToList();
             }
 
-            var result = Parallel.ForEach(new List<UserController> { c1, c2, c3, c4, c5, c6, c7, c8, c9, c10 }, ChangeBalanceAmount);
+            var result = Parallel.ForEach(from a in new List<UserController> { c1, c2, c3, c4, c5, c6, c7, c8, c9, c10 }
+                                          from b in Enumerable.Range(1, 50)
+                                          from c in Enumerable.Range(1, 2) //1 - добавить 2 - отнять
+                                          select (a, b, c), (x) => ChangeBalanceAmount(x.a, x.b, x.c));
             
             using (var db = new LoymaxContext())
             {
@@ -49,13 +53,11 @@ namespace UnitTests
             }
         }
 
-        private static void ChangeBalanceAmount(UserController controller)
+        private static void ChangeBalanceAmount(UserController controller, int id, int actionId)
         {
-            var rnd = new Random();
-            var id = rnd.Next(1, 50);//Тут можно написать один id для точной проверки многопоточного зачисления/списания
             var value = rnd.Next(1, 1000);
-            controller.AddMoney(id, value);
-            controller.DeleteMoney(id, value);
+            if (actionId == 1) controller.AddMoney(id, value);
+            else controller.DeleteMoney(id, value);
         }
     }
 }

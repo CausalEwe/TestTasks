@@ -9,8 +9,9 @@ namespace Loymax
         [Required(ErrorMessage ="Укажите имя")]
         [RegularExpression(@"^[a-zA-Zа-яА-Я''-'\s]{1,40}$", ErrorMessage = "Имя должно содержать только буквы")]
         public string Name { get; set; }
-        //[Required]
+        [Required]
         public DateTime BirthDay { get; set; }
+        [RegularExpression(@"^[a-zA-Zа-яА-Я''-'\s]{1,40}$", ErrorMessage = "Имя должно содержать только буквы")]
         public string MiddleName { get; set; }
         [Required(ErrorMessage = "Укажите фамилию")]
         [RegularExpression(@"^[a-zA-Zа-яА-Я''-'\s]{1,40}$", ErrorMessage = "Фамилия должна содержать только буквы")]

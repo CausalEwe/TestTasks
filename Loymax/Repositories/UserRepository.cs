@@ -10,6 +10,7 @@ namespace Loymax.Repositories
         Busy = 1,
         NotEnought = 2,
     }
+
     public class UserRepository : IUserRepository
     {
         public User Create(User user)
@@ -18,6 +19,7 @@ namespace Loymax.Repositories
             {
                 db.Users.Add(user);
                 db.SaveChanges();
+
                 return user;
             }
         }
@@ -27,6 +29,7 @@ namespace Loymax.Repositories
             using (var db = new LoymaxContext())
             {
                 var user = db.Users.Single(x => x.Id == id);
+
                 return user;
             }
         }
@@ -37,18 +40,17 @@ namespace Loymax.Repositories
             {
                 user = db.Users.Single(x => x.Id == user.Id);
                 user.Balance = +count;
+
                 try
                 {
                     db.SaveChanges();
                 }
-                catch(DbUpdateConcurrencyException ex)
+
+                catch(DbUpdateConcurrencyException)
                 {
                     return BalanceStatus.Busy;
                 }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
+
                 return BalanceStatus.Ok;
             }
         }
@@ -67,15 +69,13 @@ namespace Loymax.Repositories
                         db.SaveChanges();
                         return BalanceStatus.Ok;
                     }
-                    catch (DbUpdateConcurrencyException ex)
+
+                    catch (DbUpdateConcurrencyException)
                     {
                         return BalanceStatus.Busy;
                     }
-                    catch (Exception ex)
-                    {
-                        throw ex;
-                    }
                 }
+
                 return BalanceStatus.NotEnought;
             }
         }
